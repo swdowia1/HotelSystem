@@ -1,0 +1,13 @@
+CREATE DATABASE ReservationsDb;
+GO
+USE ReservationsDb;
+GO
+
+CREATE TABLE Reservations (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    GuestName NVARCHAR(MAX) NOT NULL,
+    CheckIn DATETIME2 NOT NULL,
+    CheckOut DATETIME2 NOT NULL,
+    Price DECIMAL(18,2) NOT NULL,
+    Status NVARCHAR(MAX) NOT NULL
+);

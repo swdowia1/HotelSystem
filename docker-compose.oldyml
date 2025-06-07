@@ -13,7 +13,7 @@ services:
       - mssql
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Server=mssql;Database=ReservationsDb;User=sa;Password=Your_password123;Encrypt=false;TrustServerCertificate=true;
+      - ConnectionStrings__DefaultConnection=Server=mssql;Database=ReservationsDb;User=sa;Password=Your_password123;
     restart: unless-stopped
 
   paymentservice:
@@ -28,7 +28,8 @@ services:
       - mssql
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Server=mssql;Database=ReservationsDb;User=sa;Password=Your_password123;Encrypt=false;TrustServerCertificate=true;
+      - ConnectionStrings__DefaultConnection=Server=mssql;Database=ReservationsDb;User=sa;Password=Your_password123;TrustServerCertificate=true;Encrypt=false;
+
     restart: unless-stopped
 
   rabbitmq:
@@ -56,8 +57,7 @@ services:
     restart: unless-stopped
 
   initdb:
-    image: mcr.microsoft.com/mssql-tools
-    container_name: initdb
+    image: mcr.microsoft.com/mssql/server:2022-latest
     depends_on:
       - mssql
     volumes:
@@ -67,9 +67,8 @@ services:
       echo 'Waiting for SQL Server...';
       sleep 20;
       /opt/mssql-tools/bin/sqlcmd -S mssql -U sa -P Your_password123 -i /tmp/init.sql;
-      echo 'Database initialized.'
+      echo 'Database initialized.';
       "
-    restart: "no"
 
 volumes:
   mssqldata:
