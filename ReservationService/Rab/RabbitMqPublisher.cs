@@ -10,7 +10,13 @@ namespace ReservationService.Rab
 
         public RabbitMqPublisher()
         {
-            var factory = new ConnectionFactory() { HostName = "localhost" };
+            //var factory = new ConnectionFactory() { HostName = "rabbitmq" };
+            var factory = new ConnectionFactory()
+            {
+                HostName = "rabbitmq",
+                UserName = "user",       // dopasuj do docker-compose.yml
+                Password = "password"    // dopasuj do docker-compose.yml
+            };
             _connection = factory.CreateConnection();
         }
 

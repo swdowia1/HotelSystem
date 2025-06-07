@@ -2,12 +2,43 @@
 using RabbitMQ.Client.Events;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 
-//var factory = new ConnectionFactory() { HostName = "rabbitmq" };
-var factory = new ConnectionFactory() { HostName = "localhost" };
-using var connection = factory.CreateConnection();
-using var channel = connection.CreateModel();
+var factory = new ConnectionFactory()
+{
+    HostName = "rabbitmq",
+    UserName = "user",       // dopasuj do docker-compose.yml
+    Password = "password"    // dopasuj do docker-compose.yml
+};
 
+IConnection? connection = null;
+IModel? channel = null;
+
+int retries = 10;
+while (retries > 0)
+{
+    try
+    {
+        connection = factory.CreateConnection();
+        channel = connection.CreateModel();
+        Console.WriteLine("✅ Connected to RabbitMQ");
+        break;
+    }
+    catch (Exception ex)
+    {
+        retries--;
+        Console.WriteLine($"⏳ RabbitMQ not ready. Retrying... ({retries} left)");
+        Thread.Sleep(5000); // 5 sekund przerwy
+    }
+}
+
+if (connection == null || channel == null)
+{
+    Console.WriteLine("❌ Could not connect to RabbitMQ after multiple attempts.");
+    return;
+}
+
+// logika RabbitMQ
 channel.ExchangeDeclare("reservation.exchange", ExchangeType.Fanout);
 var queueName = channel.QueueDeclare().QueueName;
 channel.QueueBind(queue: queueName, exchange: "reservation.exchange", routingKey: "");
@@ -23,7 +54,7 @@ consumer.Received += (model, ea) =>
 
 channel.BasicConsume(queue: queueName, autoAck: true, consumer: consumer);
 
-Console.WriteLine("PaymentService running...");
+Console.WriteLine("💸 PaymentService running...");
 Console.ReadLine();
 
 record ReservationCreatedEvent(int ReservationId, decimal Price, string GuestName);
