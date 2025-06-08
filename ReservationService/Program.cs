@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using ReservationService;
 using ReservationService.Model;
 using StackExchange.Redis;
 
@@ -16,6 +17,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+app.UseMiddleware<ResponseTimeMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

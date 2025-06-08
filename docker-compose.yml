@@ -11,9 +11,11 @@ services:
     depends_on:
       - rabbitmq
       - mssql
+      - redis
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Server=mssql;Database=ReservationsDb;User=sa;Password=Your_password123;Encrypt=false;TrustServerCertificate=true;
+      - Redis__Host=redis
     restart: unless-stopped
 
   paymentservice:
