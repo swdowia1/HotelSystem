@@ -13,9 +13,10 @@ namespace ReservationService.Rab
             //var factory = new ConnectionFactory() { HostName = "rabbitmq" };
             var factory = new ConnectionFactory()
             {
-                HostName = "rabbitmq",
-                UserName = "user",       // dopasuj do docker-compose.yml
-                Password = "password"    // dopasuj do docker-compose.yml
+                HostName = "localhost",
+                Port = 5672,
+                UserName =  "user",
+                Password = "password"
             };
             _connection = factory.CreateConnection();
         }

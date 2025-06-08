@@ -26,11 +26,19 @@ services:
     depends_on:
       - rabbitmq
       - mssql
+      - redis
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Server=mssql;Database=ReservationsDb;User=sa;Password=Your_password123;Encrypt=false;TrustServerCertificate=true;
-    restart: unless-stopped
+      - Redis__Host=redis
 
+    restart: unless-stopped
+  redis:
+    image: redis:7.2
+    container_name: redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq

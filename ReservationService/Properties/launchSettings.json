@@ -9,6 +9,17 @@
     }
   },
   "profiles": {
+    "ReservationService": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "applicationUrl": "http://localhost:5001",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ConnectionStrings__DefaultConnection": "Server=localhost,1433;Database=ReservationsDb;User Id=sa;Password=Your_password123;TrustServerCertificate=True;",
+        "Redis__Host": "localhost"
+      }
+    },
     "http": {
       "commandName": "Project",
       "dotnetRunMessages": true,

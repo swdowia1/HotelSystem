@@ -11,3 +11,11 @@ CREATE TABLE Reservations (
     Price DECIMAL(18,2) NOT NULL,
     Status NVARCHAR(MAX) NOT NULL
 );
+GO
+
+
+CREATE TABLE Guests (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Name NVARCHAR(100) NOT NULL,
+    Email NVARCHAR(255) NULL
+);
