@@ -1,6 +1,8 @@
 ﻿using System.Text.Json;
 using RabbitMQ.Client;
 using System.Text;
+using Microsoft.Extensions.Options;
+using System.Runtime;
 
 namespace ReservationService.Rab
 {
@@ -10,13 +12,18 @@ namespace ReservationService.Rab
 
         public RabbitMqPublisher()
         {
-            //var factory = new ConnectionFactory() { HostName = "rabbitmq" };
+            var configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .Build();
+
+            // Mapuj sekcję RabbitMQ do obiektu
+            var _settings = configuration.GetSection("RabbitMQ").Get<RabbitMQSettings>();
             var factory = new ConnectionFactory()
             {
-                HostName = "rabbitmq",
-                Port = 5672,
-                UserName =  "user",
-                Password = "password"
+                HostName = _settings.HostName,
+                Port = _settings.Port,
+                UserName = _settings.UserName,
+                Password = _settings.Password
             };
             _connection = factory.CreateConnection();
         }
