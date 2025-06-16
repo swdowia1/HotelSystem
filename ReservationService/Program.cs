@@ -4,7 +4,7 @@ using ReservationService.Model;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.Configure<RabbitMQSettings>(builder.Configuration.GetSection("RabbitMQ"));
 // Add services to the container.
 builder.Services.AddDbContext<ReservationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

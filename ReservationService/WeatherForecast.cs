@@ -10,4 +10,5 @@ namespace ReservationService
 
         public string? Summary { get; set; }
     }
+
 }

@@ -1,8 +1,17 @@
-﻿using RabbitMQ.Client;
+﻿using Microsoft.Extensions.Configuration;
+using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
+
+// Wczytaj konfigurację z appsettings.json
+var configuration = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .Build();
+
+// Pobierz sekcję RabbitMQ.h,
+var rabbitSettings = configuration.GetSection("RabbitMQ").Get<RabbitMQSettings>();
 
 var factory = new ConnectionFactory()
 {
@@ -58,3 +67,10 @@ Console.WriteLine("💸 PaymentService running...");
 Console.ReadLine();
 
 record ReservationCreatedEvent(int ReservationId, decimal Price, string GuestName);
+public class RabbitMQSettings
+{
+    public string HostName { get; set; }
+    public int Port { get; set; }
+    public string UserName { get; set; }
+    public string Password { get; set; }
+}

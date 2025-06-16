@@ -16,7 +16,12 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Server=mssql;Database=ReservationsDb;User=sa;Password=Your_password123;Encrypt=false;TrustServerCertificate=true;
       - Redis__Host=redis
+      - RabbitMQ__HostName=rabbitmq
+      - RabbitMQ__UserName=user
+      - RabbitMQ__Password=password
     restart: unless-stopped
+    networks:
+      - app-net
 
   paymentservice:
     build:
@@ -33,24 +38,35 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Server=mssql;Database=ReservationsDb;User=sa;Password=Your_password123;Encrypt=false;TrustServerCertificate=true;
       - Redis__Host=redis
-
+      - RabbitMQ__HostName=rabbitmq
+      - RabbitMQ__UserName=user
+      - RabbitMQ__Password=password
     restart: unless-stopped
+    networks:
+      - app-net
+
   redis:
     image: redis:7.2
     container_name: redis
     ports:
       - "6379:6379"
     restart: unless-stopped
+    networks:
+      - app-net
+
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
+    hostname: rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
     environment:
-      RABBITMQ_DEFAULT_USER: user
-      RABBITMQ_DEFAULT_PASS: password
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=password
     restart: unless-stopped
+    networks:
+      - app-net
 
   mssql:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -64,6 +80,8 @@ services:
       - mssqldata:/var/opt/mssql
       - ./sql/init.sql:/tmp/init.sql
     restart: unless-stopped
+    networks:
+      - app-net
 
   initdb:
     image: mcr.microsoft.com/mssql-tools
@@ -77,9 +95,14 @@ services:
       echo 'Waiting for SQL Server...';
       sleep 20;
       /opt/mssql-tools/bin/sqlcmd -S mssql -U sa -P Your_password123 -i /tmp/init.sql;
-      echo 'Database initialized.'
-      "
+      echo 'Database initialized.'"
     restart: "no"
+    networks:
+      - app-net
 
 volumes:
   mssqldata:
+
+networks:
+  app-net:
+    driver: bridge
