@@ -10,6 +10,11 @@
             return Task.CompletedTask;
         }
 
+        public Task<List<Order>> GetAllAsync()
+        {
+            return Task.FromResult(_orders.ToList()); // ✔ działa synchronicznie, ale zwraca Task
+        }
+
         public Task<Order> GetByIdAsync(Guid id)
         {
             return Task.FromResult(_orders.FirstOrDefault(o => o.Id == id));

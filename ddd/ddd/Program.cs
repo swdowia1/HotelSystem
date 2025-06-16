@@ -21,9 +21,10 @@ builder.Services.AddMediatR(cfg =>
 builder.Services.AddValidatorsFromAssemblyContaining<CreateOrderCommandValidator>();
 
 
-// ✅ Rejestracja repozytorium
-builder.Services.AddScoped<IOrderRepository, InMemoryOrderRepository>();
+builder.Services.AddDbContext<AppDbContext>(options =>
+options.UseInMemoryDatabase("OrdersDb"));
 
+builder.Services.AddScoped<IOrderRepository, EfOrderRepository>();
 
 
 // Swagger

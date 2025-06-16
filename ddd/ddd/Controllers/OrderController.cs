@@ -1,4 +1,5 @@
 ﻿using ddd.Application;
+using ddd.VM;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,6 +21,12 @@ namespace ddd.Controllers
         {
             await _mediator.Send(command);
             return Ok();
+        }
+        [HttpGet]
+        public async Task<ActionResult<List<OrderDto>>> GetAll()
+        {
+            var result = await _mediator.Send(new ListOrdersQuery());
+            return Ok(result);
         }
     }
 }

@@ -1,9 +1,14 @@
-﻿namespace ddd.Domain
+﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+
+namespace ddd.Domain
 {
     public sealed class CustomerName : IEquatable<CustomerName>
     {
         public string Value { get; }
-
+        public CustomerName()
+        {
+            
+        }
         public CustomerName(string value)
         {
             if (string.IsNullOrWhiteSpace(value))

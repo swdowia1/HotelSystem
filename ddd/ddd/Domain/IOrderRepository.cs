@@ -4,5 +4,6 @@
     {
         Task<Order> GetByIdAsync(Guid id);
         Task AddAsync(Order order);
+        Task<List<Order>> GetAllAsync(); // ← nowa metoda
     }
 }
