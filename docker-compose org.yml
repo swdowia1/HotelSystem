@@ -1,7 +1,27 @@
 version: '3.9'
 
 services:
-
+  reservationservice:
+    build:
+      context: ./ReservationService
+      dockerfile: Dockerfile
+    container_name: reservationservice
+    ports:
+      - "5001:80"
+    depends_on:
+      - rabbitmq
+      - mssql
+      - redis
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=mssql;Database=ReservationsDb;User=sa;Password=Your_password123;Encrypt=false;TrustServerCertificate=true;
+      - Redis__Host=redis
+      - RabbitMQ__HostName=rabbitmq
+      - RabbitMQ__UserName=user
+      - RabbitMQ__Password=password
+    restart: unless-stopped
+    networks:
+      - app-net
 
   paymentservice:
     build:

@@ -17,4 +17,8 @@
     <PackageReference Include="StackExchange.Redis" Version="2.8.37" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ReservationCache\ReservationCache.csproj" />
+  </ItemGroup>
 </Project>

@@ -18,12 +18,18 @@ namespace ReservationService.Rab
 
             // Mapuj sekcję RabbitMQ do obiektu
             var _settings = configuration.GetSection("RabbitMQ").Get<RabbitMQSettings>();
+            //var factory = new ConnectionFactory()
+            //{
+            //    HostName = _settings.HostName,
+            //    Port = _settings.Port,
+            //    UserName = _settings.UserName,
+            //    Password = _settings.Password
+            //};
             var factory = new ConnectionFactory()
             {
-                HostName = _settings.HostName,
-                Port = _settings.Port,
-                UserName = _settings.UserName,
-                Password = _settings.Password
+                HostName = "localhost",
+                UserName = "user",       // dopasuj do docker-compose.yml
+                Password = "password"    // dopasuj do docker-compose.yml
             };
             _connection = factory.CreateConnection();
         }

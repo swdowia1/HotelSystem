@@ -1,8 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ReservationCache;
 using ReservationService.Model;
 using ReservationService.Rab;
 using StackExchange.Redis;
 using System.Text.Json;
+using Reservation = ReservationService.Model.Reservation;
+using ReservationCa = ReservationCache.Reservation;
 
 namespace ReservationService.Controllers
 {
@@ -12,13 +16,14 @@ namespace ReservationService.Controllers
     {
         private readonly ReservationDbContext _dbContext;
         private readonly RabbitMqPublisher _publisher;
-        private readonly IConnectionMultiplexer _redis;
+      //  private readonly IConnectionMultiplexer _redis;
+        private readonly IReservationCache _rediscache;
 
-        public ReservationsController(ReservationDbContext dbContext, IConnectionMultiplexer redis)
+        public ReservationsController(ReservationDbContext dbContext, IReservationCache rediscache)
         {
             _dbContext = dbContext;
             _publisher = new RabbitMqPublisher();
-            _redis = redis;
+            _rediscache = rediscache;
         }
 
         [HttpPost]
@@ -26,7 +31,20 @@ namespace ReservationService.Controllers
         {
             reservation.Status = "Created";
             _dbContext.Reservations.Add(reservation);
+
             await _dbContext.SaveChangesAsync();
+            ReservationCa reservationCa = new ReservationCa();
+            /*
+              public string Id { get; set; }
+            public string GuestName { get; set; }
+            public decimal Price { get; set; }
+            public DateTime CheckIn { get; set; }
+             */
+            reservationCa.Id=reservation.Id.ToString();
+            reservationCa.GuestName = reservation.GuestName;
+            reservationCa.CheckIn = reservation.CheckIn;
+            _rediscache.SetReservationAsync(reservationCa);
+          
 
             var evt = new ReservationCreatedEvent
             {
@@ -41,17 +59,18 @@ namespace ReservationService.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var db = _redis.GetDatabase();
-            var cached = await db.StringGetAsync($"reservation:{id}");
-            if (cached.HasValue)
+           
+           // var cached = await _rediscache.GetReservationAsync($"reservation:{id}");
+            var cached = await _rediscache.GetReservationAsync("99");
+            if (cached!=null)
             {
-                var res = JsonSerializer.Deserialize<Reservation>(cached);
-                return Ok(res);
+              
+                return Ok(cached);
             }
 
             // pobierz z bazy danych (zak³adamy EF)
             var reservation = new Reservation { Id = id, GuestName = "Test", Price = 123, CheckIn = DateTime.Now };
-            await db.StringSetAsync($"reservation:{id}", JsonSerializer.Serialize(reservation), TimeSpan.FromMinutes(10));
+ 
 
             return Ok(reservation);
         }
